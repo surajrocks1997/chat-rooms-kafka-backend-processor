@@ -1,12 +1,12 @@
 spring:
   cloud:
     function:
-      definition: aggregate
+      definition: aggregateMessagesPerChatRoom
     stream:
       kafka:
         streams:
           bindings:
-            aggregate-in-0:
+            aggregateMessagesPerChatRoom-in-0:
               consumer:
                 keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
                 valueSerde: com.example.chatroomskafkabackendprocessor.converter.ChatMessageSerDes
@@ -18,15 +18,19 @@ spring:
           brokers:
             - localhost:9092
         bindings:
-          aggregate-in-0:
+          aggregateMessagesPerChatRoom-in-0:
             consumer:
               configuration:
                 group-id: my-consumer-group
                 value:
                   deserializer: com.example.chatroomskafkabackendprocessor.converter.ChatMessageSerDes
+          aggregateMessagesPerChatRoom-out-0:
+            consumer:
+              configuration:
+                key.serializer: org.apache.kafka.common.serialization.LongSerializer
 
       bindings:
-        aggregate-in-0:
+        aggregateMessagesPerChatRoom-in-0:
           destination: chat-room-topic
-        aggregate-out-0:
+        aggregateMessagesPerChatRoom-out-0:
           destination: chat-room-aggregator-messages-per-room
