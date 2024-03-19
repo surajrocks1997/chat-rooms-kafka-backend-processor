@@ -23,7 +23,7 @@ public class ChatKafkaProcessor {
     public Function<KStream<String, Message>, KStream<String, Long>> aggregateMessagesPerChatRoom() {
         return kStream -> kStream
                 .groupBy((key, value) -> value.getChatRoomName(), Grouped.with(Serdes.String(), new JsonSerde<>(Message.class)))
-                .windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(30)))
+                .windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(1)))
                 .aggregate(() -> 0L,
                         (key, value, aggregate) -> aggregate + 1,
                         Materialized.with(Serdes.String(), Serdes.Long()))
