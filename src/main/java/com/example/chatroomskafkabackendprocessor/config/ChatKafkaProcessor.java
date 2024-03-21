@@ -27,7 +27,7 @@ public class ChatKafkaProcessor {
                 .aggregate(() -> 0L,
                         (key, value, aggregate) -> aggregate + 1,
                         Materialized.with(Serdes.String(), Serdes.Long()))
-                .suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig.unbounded()))
+//                .suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig.unbounded()))
                 .toStream()
                 .map((key, value) -> new KeyValue<>(key.key(), value))
                 .peek((key, value) -> log.info("Aggregated Messages Per Chat Room: Key: {}   -   Value: {}", key, value));
