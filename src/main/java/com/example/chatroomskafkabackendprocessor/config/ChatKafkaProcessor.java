@@ -1,6 +1,7 @@
 package com.example.chatroomskafkabackendprocessor.config;
 
 import com.example.chatroomskafkabackendprocessor.pojo.ChatRoomMessage;
+import com.example.chatroomskafkabackendprocessor.pojo.MessageType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serdes;
@@ -21,7 +22,7 @@ public class ChatKafkaProcessor {
     @Bean
     public Function<KStream<String, ChatRoomMessage>, KStream<String, Long>> aggregateMessagesPerChatRoom() {
         return kStream -> kStream
-                .filter(((key, value) -> value.getMessage() != null))
+                .filter(((key, value) -> value.getMessageType() == MessageType.CHAT_MESSAGE))
                 .groupBy((key, value) -> value.getChatRoomName().toString(), Grouped.with(Serdes.String(), new JsonSerde<>(ChatRoomMessage.class)))
                 .windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(1)))
                 .aggregate(() -> 0L,
